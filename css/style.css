@@ -187,3 +187,399 @@
     width: 89%;
     top: 30px;
 }
+
+/* Thùy */
+
+/* Nút tìm kiếm đường đi ngắn nhất từ vị trí chọn */
+#toggleShortPathFromSelected{
+    position: fixed;
+    top: 205px; /* Đặt vị trí ngay dưới nút cuối cùng */
+    right: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    background-color: var(--color_bg1);
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    color: var(--color);
+}
+
+/* Hiệu ứng hover cho nút */
+#toggleShortPathFromSelected:hover, #saveDrawingsButton:hover {
+    background-color: var(--color_bg2);
+}
+
+/* Hộp tìm kiếm bệnh viện từ vị trí chọn */
+#searchContainer-selected {
+    top: 210px; /* Đặt vị trí dưới nút tìm kiếm đường đi ngắn nhất từ vị trí chọn */
+    width: 400px;
+    padding: 2px;
+    background-color: rgb(163, 163, 248);
+    position: absolute;
+    right: 50px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    display: none;
+}
+
+#searchContainer-selected div {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+#searchContainer-selected input {
+    width: 90%;
+    height: 30px;
+}
+
+#searchContainer-selected button {
+    background-color: var(--color_bg1);
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    border: none;
+    color: var(--color);
+}
+
+#searchContainer-selected button:hover {
+    background-color: var(--color_bg2);
+}
+
+/* Gợi ý tìm kiếm cho tìm kiếm từ vị trí chọn */
+#suggestions-selected {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #acabab;
+    width: 89%;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1002;
+    margin-top: 2px;
+}
+
+#suggestions-selected li {
+    list-style: none;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-left: -40px;
+}
+
+#suggestions-selected li:hover {
+    background-color: #f0f0f0;
+}
+
+#saveDrawingsButton {
+    position: fixed;
+    top: 255px; /* Đặt vị trí ngay dưới nút cuối cùng */
+    right: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    background-color: var(--color_bg1);
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    color: var(--color);
+}
+
+/* Định dạng Tính khoảng cách*/
+/* Nút tính khoảng cách từ vị trí chọn */
+#toggleDistanceCalculation {
+    position: fixed;
+    top: 305px; /* Đặt vị trí ngay dưới nút "Min" */
+    right: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    background-color: var(--color_bg1);
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    color: var(--color);
+}
+
+#toggleDistanceCalculation:hover {
+    background-color: var(--color_bg2);
+}
+
+/* Hộp tìm kiếm bệnh viện để tính khoảng cách */
+#searchContainer-distance {
+    top: 255px; /* Đặt vị trí ngay dưới nút tính khoảng cách */
+    width: 400px;
+    padding: 2px;
+    background-color: rgb(163, 163, 248);
+    position: absolute;
+    right: 50px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+#searchContainer-distance div {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+#searchContainer-distance input {
+    width: 90%;
+    height: 30px;
+}
+
+#searchContainer-distance button {
+    background-color: var(--color_bg1);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: none;
+    color: var(--color);
+}
+
+#searchContainer-distance button:hover {
+    background-color: var(--color_bg2);
+}
+
+/* Gợi ý tìm kiếm cho chức năng tính khoảng cách */
+#suggestions-distance {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #acabab;
+    width: 89%;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1002;
+    margin-top: 2px;
+}
+
+#suggestions-distance li {
+    list-style: none;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    margin-left: -40px;
+}
+
+#suggestions-distance li:hover {
+    background-color: #f0f0f0;
+}
+
+
+
+/* Hộp kết quả tính khoảng cách */
+#distanceResultContainer {
+    position: fixed;
+    top: 360px;
+    right: 50px;
+    background-color: #fff;
+    padding: 15px;
+    width: 250px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 1002;
+    text-align: center;
+}
+
+#distanceResultContainer h4 {
+    color: var(--color_bg1);
+    margin-bottom: 15px;
+}
+
+#calculatedDistance {
+    font-weight: bold;
+    color: #347928;
+    margin-bottom: 10px;
+}
+
+#closeDistanceContainer {
+    background-color: var(--color_bg1);
+    color: var(--color);
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+
+/*============================================================================================*/
+/* Nút mở chức năng tìm đường đi từ địa chỉ đến bệnh viện */
+#toggleRouteFromAddress {
+    position: fixed;
+    top: 395px;
+    right: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    background-color: #347928;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    color: #FCCD2A;
+}
+
+#toggleRouteFromAddress:hover {
+    background-color: #C0EBA6;
+}
+
+/* Hộp tìm kiếm địa chỉ */
+#addressSearchContainer {
+    position: absolute;
+    top: 440px;
+    right: 10px;
+    z-index: 1000;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+#addressSearchContainer input,
+#hospitalSearchContainer input {
+    width: 200px;
+    padding: 5px;
+}
+
+#addressSearchContainer button,
+#hospitalSearchContainer button {
+    background-color: #347928;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+#addressSearchContainer button:hover,
+#hospitalSearchContainer button:hover {
+    background-color: #C0EBA6;
+}
+
+/* Hộp tìm kiếm bệnh viện */
+#hospitalSearchContainer {
+    position: absolute;
+    top: 500px;
+    right: 10px;
+    z-index: 1000;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+#hospitalSuggestions {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #acabab;
+    width: 100%;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1002;
+}
+
+#hospitalSuggestions li {
+    list-style: none;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#hospitalSuggestions li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Geojson */
+
+/* Nút "Xem GeoJSON" */
+#viewGeoJsonButton {
+    position: fixed;
+    top: 350px;
+    right: 10px;
+    z-index: 1001;
+    cursor: pointer;
+    background-color: var(--color_bg1);
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    color: var(--color);
+}
+
+#viewGeoJsonButton:hover {
+    background-color: var(--color_bg2);
+}
+
+/* Modal hiển thị GeoJSON */
+#geoJsonModal {
+    display: none; /* Ẩn modal mặc định */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    justify-content: center;
+    align-items: center;
+}
+
+#geoJsonModalContent {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 70%;
+    max-width: 800px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#geoJsonTextArea {
+    width: 100%;
+    height: 300px;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    overflow-y: scroll;
+}
+
+#geoJsonModalActions {
+    margin-top: 10px;
+    text-align: right;
+}
+
+#geoJsonModalActions button {
+    margin: 5px;
+    padding: 10px 15px;
+    background-color: var(--color_bg1);
+    border: none;
+    color: var(--color);
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#geoJsonModalActions button:hover {
+    background-color: var(--color_bg2);
+}

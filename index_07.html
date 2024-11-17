@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HTTTDL</title>
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="js/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" 
+    integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css" />
+    <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
+    
+</head>
+<body>
+  
+    <div id="map"></div>
+
+    <div id="toggleForm"><i class="fa-solid fa-plus"></i></div>
+
+    <button id="toggleRadiusInput" class="btn btn-primary"><i class="fa-solid fa-vector-square"></i></button>
+
+    <button id="toggleShortPath" class="btn btn-primary">Min</button>
+
+    <button id="toggleShortPathFromSelected" class="btn btn-secondary"><i class="fa-solid fa-location-dot"></i></button>
+
+    <button id="saveDrawingsButton" class="btn btn-success">Save</button>
+
+    <button id="toggleMultiPath" class="btn btn-primary">Multi</button>
+
+    <button id="toggleDistanceCalculation" class="btn btn-secondary"><i class="fa-solid fa-arrows-alt-h"></i></button>
+
+    <button id="toggleRouteFromAddress" class="btn btn-secondary"><i class="fa-solid fa-route"></i></i></button>
+
+    <div id="radiusInputContainer" style="display: none;">
+        <label  for="radius">Khoảng cách (mét):</label>
+        <input type="number" id="radius" name="radius" value="0" min="100" max="10000" required>
+    </div>
+    
+
+    <div id="form">
+        <h5>THÊM BỆNH VIỆN TRÊN BẢN ĐỒ</h5>
+        <form id="geoForm">
+            <div class="row">
+                <label class="col-3" for="name">Tên Bệnh Viện:</label>
+                <input class="col-9" type="text" id="name" name="name" required>
+            </div>
+
+            <div class="row">
+                <label class="col-3" for="number">Số Bệnh Viện:</label>
+                <input class="col-9" type="text" id="number" name="number">
+            </div>
+
+            <div class="row">
+                <label class="col-3" for="street">Đường:</label>
+                <select class="col-9" id="street" name="street" required>
+                </select>
+            </div>
+
+            <div class="row">
+                <label class="col-3" for="ward">Phường:</label>
+                <select class="col-9" id="ward" name="ward" required>
+                </select>
+            </div>
+
+            <div class="row">
+                <label class="col-3" for="hospitalTier">Cấp Bệnh Viện:</label>
+                <select class="col-9" id="hospitalTier" name="hospitalTier" required>
+                </select>
+            </div>
+
+            <div class="row">
+                <label class="col-3" for="specialty">Chuyên Khoa:</label>
+                <select class="col-9" id="specialty" name="specialty" required>
+                </select>
+            </div>
+            
+            <div class="row">
+                <label class="col-3" for="number">Loại Bệnh viện:</label>
+                <select class="col-9" id="type" name="type" required>
+                    <option value="1">Nhà nước</option>
+                    <option value="2">Tư nhân</option>
+                    <option value="3">Kết hợp</option>
+                </select>
+            </div>
+            
+            <div class="row">
+                <label class="col-3" for="phone">Số Điện Thoại:</label>
+                <input class="col-9" type="number" id="phone" name="phone" max=3000000000 required>
+            </div>
+
+            <div class="row">
+                <label class="col-3" for="longitude">Kinh độ:</label>
+                <input class="col-9" type="number" step="any" id="longitude" name="longitude" required>
+            </div>      
+
+    
+            <div class="row">
+                <label class="col-3" for="latitude">Vĩ độ:</label>
+                <input class="col-9" type="number" step="any" id="latitude" name="latitude" required>
+            </div>
+            <div id="button-container">
+                <button type="button" id="closeForm">Đóng</button>
+                <button type="submit">Thêm Điểm</button>
+
+            </div>
+           
+        </form>
+    </div>
+
+    <div id="searchContainer-distance" style="display: none;">
+        <div>
+            <input type="text" id="searchInput-distance" placeholder="Nhập tên bệnh viện...">
+            <ul id="suggestions-distance"></ul>
+            <button id="calculateDistanceButton">Tính</button>
+        </div>
+    </div>
+
+    <!-- Hộp thoại hiển thị khoảng cách -->
+<div id="distanceResultContainer" style="display: none;">
+    <h4>Kết quả khoảng cách</h4>
+    <div id="calculatedDistance"></div>
+    <button id="closeDistanceContainer">Đóng</button>
+</div>
+    
+    <div id="searchContainer">
+        <div>  
+            <input type="text" id="searchInput" placeholder="Tìm bệnh viện...">
+            <ul id="suggestions"></ul>
+            <button id="voiceButton"><i class="fa-solid fa-microphone"></i></button>
+        </div>
+    </div>
+
+    <div id="searchContainer-short">
+        <div>  
+            <input type="text" id="searchInput-short" placeholder="Nhập bệnh viện...">
+            <ul id="suggestions-short"></ul>
+            <button id="findRouteButton">Tìm</button>
+        </div>
+    </div>
+
+    <div id="searchContainer-selected" style="display: none;">
+        <div>
+            <input type="text" id="searchInput-selected" placeholder="Nhập bệnh viện...">
+            <ul id="suggestions-selected"></ul>
+            <button id="findRouteFromSelectedButton">Tìm</button>
+        </div>
+    </div>
+
+    <div id="searchContainer-multi">
+        <div>  
+            <input type="text" id="searchInput-multi" placeholder="Nhập bệnh viện...">
+            <ul id="suggestions-multi"></ul>
+            <button id="findMultiRouteButton">Tìm</button>
+        </div>
+    </div>
+
+    <div id="addressSearchContainer" style="display: none;">
+        <input type="text" id="addressSearchInput" placeholder="Nhập địa chỉ xuất phát...">
+        <button id="findAddressButton">Tìm địa chỉ</button>
+    </div>
+
+    <div id="hospitalSearchContainer" style="display: none;">
+        <input type="text" id="hospitalSearchInput" placeholder="Nhập tên bệnh viện...">
+        <ul id="hospitalSuggestions"></ul>
+        <button id="findRouteFromAddressButton">Tìm đường đi</button>
+    </div>
+
+    <div id="chatbot"></div>
+
+
+    <script>
+
+//Nhúng bản đồ nền=================================================================================
+        var map = L.map("map", {center: [10.030249, 105.772097], zoom: 17, dragging: true, 
+            scrollWheelZoom: true});
+        L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+//Lấy vị trí hiện tại==============================================================================
+
+    var startLatitude = 0;
+    var startLongitude = 0;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    localStorage.setItem('myLatitude', lat);
+                    localStorage.setItem('myLongitude', lon);
+                    showCurrentLocation(lat, lon);
+                },
+                function(error) {
+                    console.error("Error occurred while retrieving location: ", error);
+                }
+            );
+        } else {
+            console.log("Geolocation is not supported for this Browser/OS.");
+        }
+    });
+
+    function showCurrentLocation(lat, lon) {
+        map.setView([lat, lon], 17);  
+        const popupContent = `<strong>Bạn đang ở đây!</strong>`;              
+        L.marker([lat, lon]).addTo(map)
+            .bindPopup(popupContent)
+            .openPopup();
+    }
+
+//List các bệnh viện trên bản đồ=================================================================        
+        fetch('http://localhost:8080/api/hospital/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                L.geoJSON(data).addTo(map);
+//Popup cho từng bệnh viện============================================================================
+                var geojsonData = L.geoJSON(data, {
+                    onEachFeature: onEachFeature
+                }).addTo(map);
+            })
+            .catch(error => {
+                console.error('Error fetching GeoJSON:', error);
+            });
+
+        function onEachFeature(feature, layer) {
+            const popupContent = `<strong>${feature.properties.name}</strong><br>Số ${feature.properties.number}
+            , đường${feature.properties.street}, phường ${feature.properties.ward}. SĐT: 0${feature.properties.phone}`;
+            layer.bindPopup(popupContent);
+        }
+
+//Thêm bệnh viện mới================================================================================
+
+        function fetchOptions() {
+            fetch('http://localhost:8080/api/hospital-tiers')
+                .then(response => response.json())
+                .then(data => {
+                    const hospitalTierSelect = document.getElementById('hospitalTier');
+                    data.forEach(tier => {
+                        const option = document.createElement('option');
+                        option.value = tier.id;
+                        option.textContent = tier.name;
+                        hospitalTierSelect.appendChild(option);
+                    });
+                });
+
+            fetch('http://localhost:8080/api/streets')
+                .then(response => response.json())
+                .then(data => {
+                    const streetSelect = document.getElementById('street');
+                    data.forEach(street => {
+                        const option = document.createElement('option');
+                        option.value = street.id;
+                        option.textContent = street.name;
+                        streetSelect.appendChild(option);
+                    });
+                });
+
+            fetch('http://localhost:8080/api/specialties')
+                .then(response => response.json())
+                .then(data => {
+                    const specialtySelect = document.getElementById('specialty');
+                    data.forEach(specialty => {
+                        const option = document.createElement('option');
+                        option.value = specialty.id;
+                        option.textContent = specialty.name;
+                        specialtySelect.appendChild(option);
+                    });
+                });
+
+            fetch('http://localhost:8080/api/wards')
+                .then(response => response.json())
+                .then(data => {
+                    const wardSelect = document.getElementById('ward');
+                    data.forEach(ward => {
+                        const option = document.createElement('option');
+                        option.value = ward.id;
+                        option.textContent = ward.name;
+                        wardSelect.appendChild(option);
+                    });
+                });
+        }
+
+        fetchOptions(); 
+
+        document.getElementById('geoForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            var name = document.getElementById('name').value;
+            var number = document.getElementById('number').value;
+            var type = parseInt(document.getElementById('type').value);
+            var phone = parseInt(document.getElementById('phone').value);
+            var longitude = parseFloat(document.getElementById('longitude').value);
+            var latitude = parseFloat(document.getElementById('latitude').value);
+            var hospitalTier = parseInt(document.getElementById('hospitalTier').value);
+            var street = parseInt(document.getElementById('street').value);
+            var specialty = parseInt(document.getElementById('specialty').value);
+            var ward = parseInt(document.getElementById('ward').value);
+
+
+
+            fetch('http://localhost:8080/api/hospital/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    name: name,
+                    number: number,
+                    type: type,
+                    phone: phone,
+                    hospitalTierId: hospitalTier,
+                    streetId: street,
+                    specialtyId: specialty,
+                    wardId: ward,
+                    longitude: longitude,
+                    latitude: latitude
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert('Điểm đã được thêm thành công!');
+                document.getElementById('geoForm').reset();
+            })
+            .catch(error => {
+                console.error('Error adding geometry:', error);
+                alert('Vui lòng nhập số điện thoại đúng');
+            });
+        });
+
+        document.getElementById('toggleForm').addEventListener('click', function() {
+            var form = document.getElementById('form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('closeForm').addEventListener('click', function() {
+            document.getElementById('form').style.display = 'none';
+        });
+
+//Tìm kiếm bệnh viện theo tên=======================================================================
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value;
+            var searchInput = document.getElementById('searchInput');
+            if (query.trim() === "") {
+                document.getElementById('suggestions').style.display = 'none';
+                return;
+            }
+
+            fetch(`http://localhost:8080/api/hospital/search?name=${query}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const suggestions = document.getElementById('suggestions');
+                    suggestions.innerHTML = ''; 
+                    suggestions.style.display = 'block'; 
+
+                    data.forEach(location => {
+                        const li = document.createElement('li');
+                        li.textContent = location.name + '. Số ' + location.number + ', ' +
+                            location.street + ', ' + location.ward + '. SĐT: 0'+ location.phone; 
+                        li.addEventListener('click', function() {
+                            map.setView([location.coordinates.y, location.coordinates.x], 17);
+                            L.marker([location.coordinates.y, location.coordinates.x])
+                                .addTo(map)
+                                .bindPopup(location.name)
+                                .openPopup();
+                            searchInput.value = location.name;
+                            suggestions.style.display = 'none';
+                        });
+                        suggestions.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching search results:', error);
+                });
+        });
+
+        // document.addEventListener('click', function(event) {
+        //     if (!document.getElementById('searchContainer').contains(event.target)) {
+        //         document.getElementById('suggestions').style.display = 'none';
+        //     }
+        // });
+
+ 
+//Tìm các bệnh viện bán kính ? km=======================================================
+    map.on('click', function(e) {
+
+        var radiusInputContainer = document.getElementById('radiusInputContainer');
+        if (radiusInputContainer.style.display === 'block') {
+            var radius = document.getElementById('radius').value; 
+            var clickedLat = e.latlng.lat;
+            var clickedLng = e.latlng.lng;
+
+            fetch(`http://localhost:8080/api/hospital/nearby?latitude=${clickedLat}&longitude=${clickedLng}&radius=${radius}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    map.eachLayer(function(layer) {
+                        if (layer instanceof L.Marker) {
+                            map.removeLayer(layer);
+                        }
+                    });
+
+                    data.forEach(hospital => {
+                        var marker = L.marker([hospital.coordinates.y, hospital.coordinates.x]) 
+                            .addTo(map)
+                            .bindPopup(`<strong>${hospital.name}</strong><br>Số ${hospital.number}, đường ${hospital.street}, phường ${hospital.ward}. SĐT: 0${hospital.phone}`);
+
+                            var startPoint = [clickedLat, clickedLng]; 
+                            var endPoint = [hospital.coordinates.y, hospital.coordinates.x];
+                            var latlngs = [startPoint, endPoint];
+                            var polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
+
+                    });
+
+
+                    map.setView([clickedLat, clickedLng]);
+                })
+                .catch(error => {
+                    console.error('Error fetching nearby hospitals:', error);
+                });
+        }
+
+        var form = document.getElementById('form');
+        if (form.style.display === 'block') {
+            var latitudeInput = document.getElementById('latitude');
+            var longitudeInput = document.getElementById('longitude');
+            latitudeInput.value = e.latlng.lat;
+            longitudeInput.value = e.latlng.lng;
+        }
+     
+    });
+
+    document.getElementById('toggleRadiusInput').addEventListener('click', function() {
+    var radiusInputContainer = document.getElementById('radiusInputContainer');
+    if (radiusInputContainer.style.display === 'none') {
+        radiusInputContainer.style.display = 'block';  
+    } else {
+        radiusInputContainer.style.display = 'none';   
+    }
+    });
+
+            
+
+//Tìm đường đi ngắn nhất sử dụng OSRM công cộng từ vị trí hiện tại===================================================
+    var endLongitude = 105.772097;
+    var endLatitude = 10.030249;
+
+    document.getElementById('searchInput-short').addEventListener('input', function() {
+        const query = this.value;
+        if (query.trim() === "") {
+            document.getElementById('suggestions-short').style.display = 'none';
+            return;
+        }
+        var searchInputShort = document.getElementById('searchInput-short');
+
+        fetch(`http://localhost:8080/api/hospital/search?name=${query}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const suggestions = document.getElementById('suggestions-short');
+                suggestions.innerHTML = ''; 
+                suggestions.style.display = 'block'; 
+
+                data.forEach(location => {
+                    const li = document.createElement('li');
+                    li.textContent = location.name + '. Số ' + location.number + ', ' +
+                        location.street + ', ' + location.ward + '. SĐT: 0'+ location.phone; 
+                    li.addEventListener('click', function() {
+                        endLongitude = location.coordinates.x;
+                        endLatitude = location.coordinates.y;
+                        searchInputShort.value = location.name;
+                        suggestions.style.display = 'none';
+                    });
+                    suggestions.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching search results:', error);
+            });
+    });
+
+
+    function findRoute() {
+        var startLatitude=localStorage.getItem('myLatitude');
+        var startLongitude=localStorage.getItem('myLongitude');
+        fetch(`http://localhost:8080/api/hospital/route?startLongitude=${startLongitude}&startLatitude=${startLatitude}&endLongitude=${endLongitude}&endLatitude=${endLatitude}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.routes && data.routes.length > 0) { 
+                    console.log(data.routes); 
+                    const route = data.routes[0];
+                    const latlngs = decodePolyline(route.geometry); 
+                    L.polyline(latlngs, { color: 'blue' }).addTo(map);
+                } else {
+                    console.error("Dữ liệu trả về không hợp lệ:", data);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+    }
+
+    
+
+    document.getElementById('toggleShortPath').addEventListener('click', function() {
+        var searchContainer = document.getElementById('searchContainer-short');
+
+        if (searchContainer.style.display === 'none' || searchContainer.style.display === '') {
+            searchContainer.style.display = 'block'; 
+        } else {
+            searchContainer.style.display = 'none'; 
+        }
+        });
+
+        document.getElementById('findRouteButton').addEventListener('click', function() {
+            findRoute(); 
+        });
+
+//Tìm tất cả đường đi đến bệnh viện từ vị trí hiện tại========================================================
+
+    document.getElementById('searchInput-multi').addEventListener('input', function() {
+        const query = this.value;
+        if (query.trim() === "") {
+            document.getElementById('suggestions-multi').style.display = 'none';
+            return;
+        }
+        var searchInputShort = document.getElementById('searchInput-multi');
+
+        fetch(`http://localhost:8080/api/hospital/search?name=${query}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const suggestions = document.getElementById('suggestions-multi');
+                suggestions.innerHTML = ''; 
+                suggestions.style.display = 'block'; 
+
+                data.forEach(location => {
+                    const li = document.createElement('li');
+                    li.textContent = location.name + '. Số ' + location.number + ', ' +
+                        location.street + ', ' + location.ward + '. SĐT: 0'+ location.phone; 
+                    li.addEventListener('click', function() {
+                        endLongitude = location.coordinates.x;
+                        endLatitude = location.coordinates.y;
+                        searchInputShort.value = location.name;
+                        suggestions.style.display = 'none';
+                    });
+                    suggestions.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching search results:', error);
+            });
+    });
+
+
+    function findMultiRoute() {
+        
+        var startLatitude=localStorage.getItem('myLatitude');
+        var startLongitude=localStorage.getItem('myLongitude');
+    //fetch(`http://localhost:8080/api/hospital/route?startLongitude=${startLongitude}&startLatitude=${startLatitude}&endLongitude=${endLongitude}&endLatitude=${endLatitude}&alternatives=true`)
+       fetch(`http://localhost:8080/api/hospital/route?startLongitude=105.777082&startLatitude=10.026905&endLongitude=105.764686&endLatitude=10.021456&alternatives=true`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.routes && data.routes.length > 0) { 
+                    console.log(data.routes); 
+                    data.routes.forEach(route => {
+                        const latlngs = decodePolyline(route.geometry); 
+                        L.polyline(latlngs, { color: 'green' }).addTo(map);
+                    });
+                } else {
+                    console.error("Dữ liệu trả về không hợp lệ:", data);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+    }
+
+    document.getElementById('toggleMultiPath').addEventListener('click', function() {
+        var searchContainer = document.getElementById('searchContainer-multi');
+
+        if (searchContainer.style.display === 'none' || searchContainer.style.display === '') {
+            searchContainer.style.display = 'block'; 
+        } else {
+            searchContainer.style.display = 'none'; 
+        }
+        });
+
+        document.getElementById('findMultiRouteButton').addEventListener('click', function() {
+            findMultiRoute(); 
+        });
+
+
+
+
+
+//Hàm dùng chung cho tìm đường đi===========================================================
+
+    function decodePolyline(encoded) {
+        const poly = [];
+        let index = 0, len = encoded.length;
+        let lat = 0, lng = 0;
+
+        while (index < len) {
+            let b, shift = 0, result = 0;
+            do {
+                b = encoded.charCodeAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+
+            const dlat = ((result >> 1) ^ -(result & 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charCodeAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+
+            const dlng = ((result >> 1) ^ -(result & 1));
+            lng += dlng;
+
+            poly.push([lat / 1E5, lng / 1E5]);
+        }
+        return poly;
+    }
+
+
+//Popup tọa độ================================================================================================
+
+        var popup = L.popup();
+        map.on("click", onMapClick);
+
+        function onMapClick(e) {
+            popup.setLatLng(e.latlng)
+                .setContent("Toa do la: " + Math.round(e.latlng.lng * 1000000 + Number.EPSILON) / 1000000 + "," + Math.round(e.latlng.lat * 1000000 + Number.EPSILON) / 1000000).openOn(map);
+        }
+
+//CHATBOT================================================================================================
+        $(document).ready(function() { 
+            $('#chatbot').load('chatbot.html', function(response, status, xhr) {});
+        });
+
+//Tìm kiếm giọng nói sử dụng Web Speech API=======================================================================================
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'vi-VN';  
+        recognition.interimResults = true; 
+
+        const searchInput = document.getElementById('searchInput');
+        const voiceButton = document.getElementById('voiceButton');
+
+        voiceButton.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        recognition.addEventListener('result', (event) => {
+            const transcript = event.results[0][0].transcript;
+            searchInput.value = transcript; 
+            document.getElementById('searchInput').dispatchEvent(new Event('input'));
+        });
+
+        recognition.addEventListener('end', () => {
+            console.log('Voice recognition ended');
+        });
+
+    } else {
+        console.log('Web Speech API is not supported in this browser.');
+    }
+//Vẽ trên bản đồ================================================================================================
+var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    var drawControl = new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems
+        },
+        draw: {
+            polygon: true,
+            polyline: true,
+            rectangle: true,
+            circle: true,
+            circlemarker: true,
+            marker: true,
+        }
+    });
+
+    map.addControl(drawControl);
+
+    // Lắng nghe sự kiện vẽ
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+        drawnItems.addLayer(layer);
+        // Gắn sự kiện chuột phải để hiển thị nút xóa
+    layer.on('contextmenu', function (e) {
+        showDeleteButton(e, layer);
+    });
+    });
+
+// Tọa độ bệnh viện được chọn
+var startLongitude = null;
+var startLatitude = null;
+
+// Xử lý hiển thị hộp thoại tìm kiếm khi nhấn vào "Tìm từ vị trí chọn"
+document.getElementById('toggleShortPathFromSelected').addEventListener('click', function() {
+    var searchContainerSelected = document.getElementById('searchContainer-selected');
+
+    if (searchContainerSelected.style.display === 'none' || searchContainerSelected.style.display === '') {
+        searchContainerSelected.style.display = 'block';
+    } else {
+        searchContainerSelected.style.display = 'none';
+    }
+});
+
+// Xử lý tìm kiếm bệnh viện cho chức năng tìm từ vị trí chọn
+document.getElementById('searchInput-selected').addEventListener('input', function() {
+    const query = this.value;
+    if (query.trim() === "") {
+        document.getElementById('suggestions-selected').style.display = 'none';
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/hospital/search?name=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            const suggestions = document.getElementById('suggestions-selected');
+            suggestions.innerHTML = '';
+            suggestions.style.display = 'block';
+
+            data.forEach(location => {
+                const li = document.createElement('li');
+                li.textContent = location.name + '. Số ' + location.number + ', ' +
+                    location.street + ', ' + location.ward + '. SĐT: 0' + location.phone;
+                li.addEventListener('click', function() {
+                    endLongitude = location.coordinates.x;
+                    endLatitude = location.coordinates.y;
+                    document.getElementById('searchInput-selected').value = location.name;
+                    suggestions.style.display = 'none';
+                });
+                suggestions.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching search results:', error);
+        });
+});
+
+// Chức năng tìm đường từ vị trí chọn trên bản đồ
+function findRouteFromSelectedLocation() {
+    if (!startLatitude || !startLongitude) {
+        alert("Vui lòng chọn điểm bắt đầu trên bản đồ bằng cách nhấp vào bản đồ.");
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/hospital/route?startLongitude=${startLongitude}&startLatitude=${startLatitude}&endLongitude=${endLongitude}&endLatitude=${endLatitude}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+                const latlngs = decodePolyline(route.geometry);
+                L.polyline(latlngs, { color: 'green' }).addTo(map); // Vẽ tuyến màu xanh lá
+            } else {
+                console.error("Dữ liệu trả về không hợp lệ:", data);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+}
+
+// Xử lý sự kiện nhấp chuột trên bản đồ để lấy tọa độ vị trí bắt đầu
+map.on("click", function(e) {
+    startLatitude = e.latlng.lat;
+    startLongitude = e.latlng.lng;
+    L.popup()
+        .setLatLng(e.latlng)
+        .setContent("Tọa độ: " + startLongitude.toFixed(6) + ", " + startLatitude.toFixed(6))
+        .openOn(map);
+});
+
+// Kích hoạt tìm đường từ vị trí chọn khi nhấn nút tìm
+document.getElementById('findRouteFromSelectedButton').addEventListener('click', function() {
+    findRouteFromSelectedLocation();
+});
+
+// Lắng nghe sự kiện vẽ để thêm layer vào nhóm vẽ và gắn sự kiện chuột phải
+map.on(L.Draw.Event.CREATED, function (event) {
+    var layer = event.layer;
+    drawnItems.addLayer(layer);
+
+    // Gắn sự kiện chuột phải để hiển thị nút xóa
+    layer.on('contextmenu', function (e) {
+        showDeleteButton(e, layer);
+    });
+});
+
+// Hàm hiển thị nút xóa tại vị trí nhấn chuột phải
+function showDeleteButton(e, layer) {
+    var deleteButton = document.createElement("button");
+    deleteButton.innerText = "Xóa";
+    deleteButton.style.position = "absolute";
+    deleteButton.style.left = e.originalEvent.pageX + "px";
+    deleteButton.style.top = e.originalEvent.pageY + "px";
+    deleteButton.style.zIndex = 1000;
+    document.body.appendChild(deleteButton);
+
+    deleteButton.addEventListener("click", function () {
+        // Xóa layer khỏi map và FeatureGroup
+        drawnItems.removeLayer(layer);
+
+        // Cập nhật lại localStorage
+        saveDrawings();
+
+        // Xóa nút xóa sau khi đã thực hiện xóa
+        document.body.removeChild(deleteButton);
+    });
+
+    // Xóa nút khi click ra ngoài
+    document.addEventListener("click", function onClickOutside(event) {
+        if (event.target !== deleteButton) {
+            document.body.removeChild(deleteButton);
+            document.removeEventListener("click", onClickOutside);
+        }
+    });
+}
+
+// Hàm lưu các đối tượng đã vẽ vào localStorage
+function saveDrawings() {
+    var data = {
+        geojson: drawnItems.toGeoJSON(),
+        circles: [],
+        circleMarkers: []
+    };
+
+    // Lưu Circle và CircleMarker riêng biệt với tọa độ và bán kính
+    drawnItems.eachLayer(function (layer) {
+        if (layer instanceof L.Circle) {
+            data.circles.push({
+                type: "Circle",
+                lat: layer.getLatLng().lat,
+                lng: layer.getLatLng().lng,
+                radius: layer.getRadius()
+            });
+        } else if (layer instanceof L.CircleMarker) {
+            data.circleMarkers.push({
+                type: "CircleMarker",
+                lat: layer.getLatLng().lat,
+                lng: layer.getLatLng().lng,
+                radius: layer.getRadius()
+            });
+        }
+    });
+
+    localStorage.setItem("drawnItems", JSON.stringify(data));
+}
+function saveDrawingsWithAlert() {
+    saveDrawings();
+    alert("Đã lưu thành công!");
+}
+// Lắng nghe sự kiện nút "Lưu bản vẽ"
+document.getElementById("saveDrawingsButton").addEventListener("click", saveDrawingsWithAlert);
+
+// Hàm khôi phục các đối tượng đã vẽ từ localStorage khi tải lại trang
+function loadDrawings() {
+    var data = localStorage.getItem("drawnItems");
+    if (data) {
+        var parsedData = JSON.parse(data);
+
+        // Khôi phục các đối tượng không phải là Circle và CircleMarker từ GeoJSON
+        L.geoJSON(parsedData.geojson, {
+            onEachFeature: function (feature, layer) {
+                drawnItems.addLayer(layer);
+                // Gắn sự kiện chuột phải cho mỗi đối tượng khôi phục
+                layer.on('contextmenu', function (e) {
+                    showDeleteButton(e, layer);
+                });
+            }
+        }).addTo(map);
+
+        // Khôi phục các Circle từ mảng circles
+        parsedData.circles.forEach(function (circleData) {
+            var circle = L.circle([circleData.lat, circleData.lng], { radius: circleData.radius });
+            drawnItems.addLayer(circle);
+            // Gắn sự kiện chuột phải cho Circle
+            circle.on('contextmenu', function (e) {
+                showDeleteButton(e, circle);
+            });
+        });
+
+        // Khôi phục các CircleMarker từ mảng circleMarkers
+        parsedData.circleMarkers.forEach(function (circleMarkerData) {
+            var circleMarker = L.circleMarker([circleMarkerData.lat, circleMarkerData.lng], { radius: circleMarkerData.radius });
+            drawnItems.addLayer(circleMarker);
+            // Gắn sự kiện chuột phải cho CircleMarker
+            circleMarker.on('contextmenu', function (e) {
+                showDeleteButton(e, circleMarker);
+            });
+        });
+    }
+}
+
+// Gọi hàm loadDrawings khi tải lại trang
+loadDrawings();
+
+// // Hàm tính khoảng cách giữa hai tọa độ (km) bằng công thức Haversine
+// function calculateDistance(lat1, lon1, lat2, lon2) {
+//     const R = 6371; // Bán kính Trái Đất (km)
+//     const dLat = (lat2 - lat1) * (Math.PI / 180);
+//     const dLon = (lon2 - lon1) * (Math.PI / 180);
+//     const a =
+//         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+//         Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+//         Math.sin(dLon / 2) * Math.sin(dLon / 2);
+//     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//     return R * c;
+// }
+
+// // Tìm kiếm bệnh viện để tính khoảng cách
+// document.getElementById('distanceInput').addEventListener('input', function() {
+//     const query = this.value;
+//     if (query.trim() === "") {
+//         document.getElementById('distanceSuggestions').style.display = 'none';
+//         return;
+//     }
+
+//     fetch(`http://localhost:8080/api/hospital/search?name=${query}`)
+//         .then(response => response.json())
+//         .then(data => {
+//             const suggestions = document.getElementById('distanceSuggestions');
+//             suggestions.innerHTML = '';
+//             suggestions.style.display = 'block';
+
+//             data.forEach(location => {
+//                 const li = document.createElement('li');
+//                 li.textContent = `${location.name} - ${location.street}, ${location.ward}`;
+                
+//                 li.addEventListener('click', function() {
+//                     endLongitude = location.coordinates.x;
+//                     endLatitude = location.coordinates.y;
+//                     document.getElementById('distanceInput').value = location.name;
+//                     suggestions.style.display = 'none';
+//                 });
+                
+//                 suggestions.appendChild(li);
+//             });
+//         })
+//         .catch(error => {
+//             console.error('Error fetching hospital data:', error);
+//         });
+// });
+
+// // Xử lý nút "Tính khoảng cách"
+// document.getElementById('calculateDistanceButton').addEventListener('click', function() {
+//     if (!startLatitude || !startLongitude) {
+//         alert("Vui lòng chọn vị trí bắt đầu bằng cách nhấn vào bản đồ.");
+//         return;
+//     }
+
+//     if (!endLatitude || !endLongitude) {
+//         alert("Vui lòng chọn một bệnh viện từ danh sách gợi ý.");
+//         return;
+//     }
+
+//     const distance = calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
+//     document.getElementById('calculatedDistance').textContent = `Khoảng cách đến bệnh viện là: ${distance.toFixed(2)} km`;
+//     document.getElementById('distanceContainer').style.display = 'block';
+// });
+
+// // Đóng hộp thoại kết quả tính khoảng cách
+// document.getElementById('closeDistanceContainer').addEventListener('click', function() {
+//     document.getElementById('distanceContainer').style.display = 'none';
+// });
+
+// // Lấy tọa độ vị trí bắt đầu khi nhấn vào bản đồ
+// map.on("click", function(e) {
+//     startLatitude = e.latlng.lat;
+//     startLongitude = e.latlng.lng;
+//     L.popup()
+//         .setLatLng(e.latlng)
+//         .setContent("Tọa độ: " + startLongitude.toFixed(6) + ", " + startLatitude.toFixed(6))
+//         .openOn(map);
+// });
+
+// Tọa độ bệnh viện được chọn
+var startLongitude = null;
+var startLatitude = null;
+var endLongitude = null;
+var endLatitude = null;
+
+// Hiển thị hộp thoại tìm kiếm và tính khoảng cách khi nhấn nút "Distance"
+document.getElementById('toggleDistanceCalculation').addEventListener('click', function() {
+    var searchContainer = document.getElementById('searchContainer-distance');
+    searchContainer.style.display = (searchContainer.style.display === 'none' || searchContainer.style.display === '') ? 'block' : 'none';
+});
+
+// Xử lý tìm kiếm bệnh viện cho chức năng tính khoảng cách
+document.getElementById('searchInput-distance').addEventListener('input', function() {
+    const query = this.value;
+    if (query.trim() === "") {
+        document.getElementById('suggestions-distance').style.display = 'none';
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/hospital/search?name=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            const suggestions = document.getElementById('suggestions-distance');
+            suggestions.innerHTML = '';
+            suggestions.style.display = 'block';
+
+            data.forEach(location => {
+                const li = document.createElement('li');
+                li.textContent = location.name + '. Số ' + location.number + ', ' +
+                    location.street + ', ' + location.ward + '. SĐT: 0' + location.phone;
+                
+                li.addEventListener('click', function() {
+                    endLongitude = location.coordinates.x;
+                    endLatitude = location.coordinates.y;
+                    document.getElementById('searchInput-distance').value = location.name;
+                    suggestions.style.display = 'none';
+                });
+
+                suggestions.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching hospital data:', error);
+        });
+});
+
+// Xử lý sự kiện nhấp chuột trên bản đồ để lấy tọa độ vị trí bắt đầu
+map.on("click", function(e) {
+    startLatitude = e.latlng.lat;
+    startLongitude = e.latlng.lng;
+    L.popup()
+        .setLatLng(e.latlng)
+        .setContent("Tọa độ: " + startLongitude.toFixed(6) + ", " + startLatitude.toFixed(6))
+        .openOn(map);
+});
+
+// Chức năng tính khoảng cách thực tế đến bệnh viện
+function calculateRouteDistance() {
+    if (!startLatitude || !startLongitude) {
+        alert("Vui lòng chọn điểm bắt đầu trên bản đồ bằng cách nhấp vào bản đồ.");
+        return;
+    }
+    if (!endLatitude || !endLongitude) {
+        alert("Vui lòng chọn một bệnh viện từ danh sách gợi ý.");
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/hospital/route?startLongitude=${startLongitude}&startLatitude=${startLatitude}&endLongitude=${endLongitude}&endLatitude=${endLatitude}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+                
+                // Tính tổng khoảng cách dựa trên dữ liệu trả về của API
+                const distanceInKm = route.distance / 1000; // đổi từ mét sang km
+
+                // Hiển thị kết quả khoảng cách trong hộp thoại
+                document.getElementById('calculatedDistance').textContent = `Khoảng cách đến bệnh viện là: ${distanceInKm.toFixed(2)} km`;
+                document.getElementById('distanceResultContainer').style.display = 'block';
+            } else {
+                console.error("Dữ liệu trả về không hợp lệ:", data);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+}
+
+// Kích hoạt tính khoảng cách khi nhấn nút "Tính khoảng cách"
+document.getElementById('calculateDistanceButton').addEventListener('click', calculateRouteDistance);
+
+// Đóng hộp thoại hiển thị kết quả khoảng cách
+document.getElementById('closeDistanceContainer').addEventListener('click', function() {
+    document.getElementById('distanceResultContainer').style.display = 'none';
+});
+
+// Tọa độ của địa chỉ và bệnh viện
+var addressLongitude = null;
+var addressLatitude = null;
+var hospitalLongitude = null;
+var hospitalLatitude = null;
+
+// Mở hộp thoại tìm kiếm địa chỉ và bệnh viện khi nhấn nút
+document.getElementById('toggleRouteFromAddress').addEventListener('click', function() {
+    const addressContainer = document.getElementById('addressSearchContainer');
+    const hospitalContainer = document.getElementById('hospitalSearchContainer');
+    addressContainer.style.display = addressContainer.style.display === 'none' ? 'block' : 'none';
+    hospitalContainer.style.display = hospitalContainer.style.display === 'none' ? 'block' : 'none';
+});
+
+// Tìm kiếm địa chỉ và lấy tọa độ
+function searchAddress(address) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+    return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                const location = data[0];
+                return { lat: parseFloat(location.lat), lon: parseFloat(location.lon) };
+            } else {
+                alert("Không tìm thấy địa chỉ.");
+                return null;
+            }
+        });
+}
+
+// Sự kiện tìm kiếm địa chỉ
+document.getElementById('findAddressButton').addEventListener('click', async function() {
+    const address = document.getElementById('addressSearchInput').value;
+    if (!address) {
+        alert("Vui lòng nhập địa chỉ.");
+        return;
+    }
+
+    const addressCoordinates = await searchAddress(address);
+    if (addressCoordinates) {
+        addressLatitude = addressCoordinates.lat;
+        addressLongitude = addressCoordinates.lon;
+
+        // Hiển thị vị trí địa chỉ trên bản đồ
+        map.setView([addressLatitude, addressLongitude], 15);
+        L.marker([addressLatitude, addressLongitude]).addTo(map)
+            .bindPopup(`<b>Địa chỉ: ${address}</b>`)
+            .openPopup();
+    }
+});
+
+// Tìm kiếm bệnh viện và lấy tọa độ
+document.getElementById('hospitalSearchInput').addEventListener('input', function() {
+    const query = this.value;
+    if (query.trim() === "") {
+        document.getElementById('hospitalSuggestions').style.display = 'none';
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/hospital/search?name=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            const suggestions = document.getElementById('hospitalSuggestions');
+            suggestions.innerHTML = '';
+            suggestions.style.display = 'block';
+
+            data.forEach(location => {
+                const li = document.createElement('li');
+                li.textContent = `${location.name}. Số ${location.number}, ${location.street}, ${location.ward}. SĐT: 0${location.phone}`;
+                li.addEventListener('click', function() {
+                    hospitalLongitude = location.coordinates.x;
+                    hospitalLatitude = location.coordinates.y;
+                    document.getElementById('hospitalSearchInput').value = location.name;
+                    suggestions.style.display = 'none';
+                });
+                suggestions.appendChild(li);
+            });
+        })
+        .catch(error => console.error('Error fetching search results:', error));
+});
+
+// Tìm đường đi từ địa chỉ đến bệnh viện
+function findRouteFromAddressToHospital() {
+    if (!addressLatitude || !addressLongitude) {
+        alert("Vui lòng tìm kiếm địa chỉ trước.");
+        return;
+    }
+    if (!hospitalLatitude || !hospitalLongitude) {
+        alert("Vui lòng chọn bệnh viện từ danh sách.");
+        return;
+    }
+
+    fetch(`http://localhost:8080/api/hospital/route?startLongitude=${addressLongitude}&startLatitude=${addressLatitude}&endLongitude=${hospitalLongitude}&endLatitude=${hospitalLatitude}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.routes && data.routes.length > 0) {
+                const route = data.routes[0];
+                const latlngs = decodePolyline(route.geometry);
+
+                // Vẽ tuyến đường trên bản đồ
+                L.polyline(latlngs, { color: 'blue' }).addTo(map);
+            } else {
+                console.error("Dữ liệu trả về không hợp lệ:", data);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+}
+
+// Sự kiện tìm đường khi nhấn nút tìm đường từ địa chỉ đến bệnh viện
+document.getElementById('findRouteFromAddressButton').addEventListener('click', findRouteFromAddressToHospital);
+
+
+    </script>
+</body>
+</html>
